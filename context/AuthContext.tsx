@@ -2,10 +2,10 @@
 
 import {
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from "react";
 
 import { ENDPOINTS } from "@/utilities/endpoints";
@@ -13,7 +13,7 @@ import { ENDPOINTS } from "@/utilities/endpoints";
 export interface User {
   id: string;
   githubId: string;
-  githubUsername: string;
+  githubusername: string;
   displayName: string;
   avatarUrl?: string;
 }
@@ -67,18 +67,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     fetchUser();
   }, []);
 
-  const logout = async () => {
-    try {
-      await fetch(ENDPOINTS.LOGOUT, {
-        method: "POST",
-        credentials: "include",
-      });
 
-      setUser(null);
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+ const logout = async () => {
+  const response = await fetch(ENDPOINTS.LOGOUT, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Logout failed: ${response.status}`);
+  }
+
+  setUser(null);
+};
 
   return (
     <AuthContext.Provider

@@ -5,4 +5,5 @@ export const ENDPOINTS = {
     CALLBACK: `${BACKEND_HOST_URL}/auth/me`,
     LOGOUT: `${BACKEND_HOST_URL}/auth/logout`,
     REPOS: `${BACKEND_HOST_URL}/api/repos`,
+    CHAT_SESSIONS: `${BACKEND_HOST_URL}/api/chat/sessions`
 }

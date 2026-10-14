@@ -1,7 +1,7 @@
 export type IndexStatus =
   | "PENDING"
   | "INDEXING"
-  | "COMPLETED"
+  | "DONE"
   | "FAILED";
 
 export interface Repository {

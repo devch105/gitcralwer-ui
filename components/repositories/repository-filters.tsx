@@ -41,13 +41,17 @@ function getCount(
         case "PRIVATE":
             return repositories.filter((repo) => repo.isPrivate).length;
 
-        case "COMPLETED":
-        case "PENDING":
-        case "INDEXING":
-        case "FAILED":
-            return repositories.filter(
-                (repo) => repo.indexStatus === filter
-            ).length;
+      case "COMPLETED":
+    return repositories.filter(
+        (repo) => repo.indexStatus === "DONE"
+    ).length;
+
+case "PENDING":
+case "INDEXING":
+case "FAILED":
+    return repositories.filter(
+        (repo) => repo.indexStatus === filter
+    ).length;
 
         default:
             return repositories.length;
