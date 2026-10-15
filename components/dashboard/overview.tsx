@@ -106,7 +106,7 @@ export default function Overview() {
     <div className="mx-auto space-y-4 p-3 md:p-8">
          <section className="mb-2">
                   <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
-                      Welcome back, {user?.displayName || "User"} 👋
+                      Welcome back, {user?.displayName || user?.githubusername} 👋
                   </h1>
          </section>
       <section className="space-y-2">

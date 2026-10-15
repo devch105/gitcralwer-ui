@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -9,17 +8,19 @@ import {
 
 import {
     fetchRepositories,
+    syncRepositories,
     startRepositoryIndexing,
 } from "@/lib/api/repositories";
 
 import type { Repository } from "@/types/repository";
 
 export function useRepositories() {
+    const queryClient = useQueryClient();
+
     return useQuery<Repository[]>({
         queryKey: ["repositories"],
         queryFn: fetchRepositories,
 
-        // Poll while at least one repository is being indexed.
         refetchInterval: (query) => {
             const repositories = query.state.data;
 
@@ -37,6 +38,21 @@ export function useRepositories() {
     });
 }
 
+export function useSyncRepositories() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: syncRepositories,
+
+        onSuccess: (repositories) => {
+            queryClient.setQueryData<Repository[]>(
+                ["repositories"],
+                repositories
+            );
+        },
+    });
+}
+
 export function useStartRepositoryIndexing() {
     const queryClient = useQueryClient();
 
@@ -45,8 +61,6 @@ export function useStartRepositoryIndexing() {
             startRepositoryIndexing(repositoryId),
 
         onSuccess: (repository) => {
-            // Immediately update the individual repository
-            // in case the UI uses this query later.
             queryClient.setQueryData<Repository[]>(
                 ["repositories"],
                 (repositories) => {
@@ -62,7 +76,6 @@ export function useStartRepositoryIndexing() {
                 }
             );
 
-            // Fetch the latest repository list.
             queryClient.invalidateQueries({
                 queryKey: ["repositories"],
             });

@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { RefreshCw, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -12,9 +12,9 @@ import RepositoryFilters, {
 import {
     useRepositories,
     useStartRepositoryIndexing,
+    useSyncRepositories,
 } from "@/hooks/use-repositories";
 
-import  DashboardHeader from "@/components/dashboard/DashboardHeader";
 import type { Repository } from "@/types/repository";
 
 export default function RepositoriesPage() {
@@ -25,12 +25,21 @@ export default function RepositoriesPage() {
         isPending,
         isError,
         error,
+        refetch,
+        isFetching,
     } = useRepositories();
 
     const {
         mutate: startIndexing,
         isPending: isStartingIndexing,
     } = useStartRepositoryIndexing();
+
+
+    const {
+    mutate: syncRepositories,
+    isPending: isSyncing,
+    error: syncError,
+    } = useSyncRepositories();
 
     const [activeFilter, setActiveFilter] =
         useState<RepositoryFilter>("ALL");
@@ -86,10 +95,26 @@ export default function RepositoriesPage() {
         router.push(`/chat/${encodeURIComponent(repository.id)}`);
     }
 
+    async function handleSyncRepositories() {
+        await refetch();
+    }
+
     if (isPending) {
         return (
             <main className="space-y-6 p-6 md:p-8">
-                {/* //<DashboardHeader /> */}
+                <section className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">
+                        GitHub
+                    </p>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        Repositories
+                    </h1>
+                    <p className="max-w-2xl text-sm text-muted-foreground">
+                        Manage your GitHub repositories, check indexing
+                        status, and prepare repositories for code search.
+                    </p>
+                </section>
+
                 <div className="flex min-h-60 items-center justify-center">
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
                         <div className="h-5 w-5 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900" />
@@ -103,7 +128,17 @@ export default function RepositoriesPage() {
     if (isError) {
         return (
             <main className="space-y-6 p-6 md:p-8">
-                {/* <DashboardHeader /> */}
+                <section className="space-y-2">
+                    <p className="text-sm font-medium text-muted-foreground">
+                        GitHub
+                    </p>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        Repositories
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Manage your GitHub repositories.
+                    </p>
+                </section>
 
                 <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5">
                     <h2 className="font-semibold">
@@ -115,6 +150,19 @@ export default function RepositoriesPage() {
                             ? error.message
                             : "An unexpected error occurred."}
                     </p>
+
+                    <button
+                        type="button"
+                        onClick={handleSyncRepositories}
+                        disabled={isFetching}
+                        className="mt-4 inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        <RefreshCw
+                            size={16}
+                            className={isFetching ? "animate-spin" : ""}
+                        />
+                        Retry
+                    </button>
                 </div>
             </main>
         );
@@ -123,16 +171,46 @@ export default function RepositoriesPage() {
     return (
         <main className="space-y-8 p-6 md:p-8">
             {/* Header */}
-            <section className="space-y-2">
-                {/* <DashboardHeader /> */}
+            <section className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <p className="text-sm font-medium text-muted-foreground">
+                            GitHub
+                        </p>
 
-                <p className="text-sm font-medium text-muted-foreground">
-                    GitHub
-                </p>
+                        <h1 className="text-3xl font-bold tracking-tight">
+                            Repositories
+                        </h1>
+                    </div>
 
-                <h1 className="text-3xl font-bold tracking-tight">
-                    Repositories
-                </h1>
+                    {/* <button
+                        type="button"
+                        onClick={handleSyncRepositories}
+                        disabled={isFetching}
+                        className="inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        <RefreshCw
+                            size={16}
+                            className={isFetching ? "animate-spin" : ""}
+                        />
+                        {isFetching
+                            ? "Syncing..."
+                            : "Sync Repositories"}
+                    </button> */}
+
+                    <button
+    type="button"
+    onClick={() => syncRepositories()}
+    disabled={isSyncing}
+    className="inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+>
+    <RefreshCw
+        size={16}
+        className={isSyncing ? "animate-spin" : ""}
+    />
+    {isSyncing ? "Syncing..." : "Sync Repositories"}
+</button>
+                </div>
 
                 <p className="max-w-2xl text-sm text-muted-foreground">
                     Manage your GitHub repositories, check indexing
@@ -230,10 +308,10 @@ export default function RepositoriesPage() {
                     <p className="mt-2 text-sm text-muted-foreground">
                         {searchQuery.trim()
                             ? "Try another search term or change your selected filter."
-                            : "There are no repositories matching this filter."}
+                            : "Sync your GitHub repositories to load them here."}
                     </p>
 
-                    {(searchQuery || activeFilter !== "ALL") && (
+                    {searchQuery.trim() ? (
                         <button
                             type="button"
                             onClick={() => {
@@ -243,6 +321,21 @@ export default function RepositoriesPage() {
                             className="mt-4 rounded-lg border px-4 py-2 text-sm font-medium transition hover:bg-muted"
                         >
                             Clear search and filters
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={handleSyncRepositories}
+                            disabled={isFetching}
+                            className="mt-4 inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            <RefreshCw
+                                size={16}
+                                className={isFetching ? "animate-spin" : ""}
+                            />
+                            {isFetching
+                                ? "Syncing..."
+                                : "Sync Repositories"}
                         </button>
                     )}
                 </div>
