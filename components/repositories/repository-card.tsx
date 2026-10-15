@@ -186,7 +186,8 @@ export default function RepositoryCard({
                     </div>
                 )}
 
-                {/* Repository statistics */}
+
+                {isCompleted ? (
                 <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-lg border bg-muted/30 p-3">
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -210,6 +211,19 @@ export default function RepositoryCard({
                         </p>
                     </div>
                 </div>
+                    
+                ):
+                (
+
+                    <div className="grid grid-cols-1">
+                        <div className="rounded-md border bg-muted p-3">
+                        <div className="flex items-center text-xs text-red-500">
+                            Index your repository to view Files counts and Chunks ?
+                        </div>
+                        </div>
+                    </div>
+                )}
+
 
                 {/* Repository metadata */}
                 <div className="space-y-2 text-sm">
