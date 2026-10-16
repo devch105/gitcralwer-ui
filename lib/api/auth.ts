@@ -4,7 +4,7 @@ import { ENDPOINTS } from "@/utilities/endpoints";
 
 export async function getCurrentUser(): Promise<User| null> {
 
-    const response  = await fetch(ENDPOINTS.CALLBACK,
+    const response  = await fetch(ENDPOINTS.ME,
         {
             method: "GET",
             credentials: "include",

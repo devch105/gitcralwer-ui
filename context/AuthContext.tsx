@@ -1,22 +1,9 @@
 "use client";
 
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { User } from "@/types/User";
 import { ENDPOINTS } from "@/utilities/endpoints";
-
-export interface User {
-  id: string;
-  githubId: string;
-  githubusername: string;
-  displayName: string;
-  avatarUrl?: string;
-}
 
 interface AuthContextType {
   user: User | null;
@@ -28,68 +15,39 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // true only until the first check finishes
 
-  const fetchUser = async () => {
+  const refreshUser = useCallback(async () => {
     try {
-      setLoading(true);
-
-      const response = await fetch(ENDPOINTS.CALLBACK, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
+      const res = await fetch(ENDPOINTS.ME, { credentials: "include" });
+      if (res.status === 401) {
         setUser(null);
-        return;
+      } else if (res.ok) {
+        setUser((await res.json()) as User);
+      } else {
+        console.error("Auth check failed:", res.status); // keep current user on 5xx
       }
-
-      const data = await response.json();
-
-      console.log("Authenticated user:", data);
-
-      setUser(data);
-    } catch (error) {
-      console.error("Failed to fetch authenticated user:", error);
-      setUser(null);
+    } catch (e) {
+      console.error("Auth check failed:", e);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchUser();
   }, []);
 
+  useEffect(() => { refreshUser(); }, [refreshUser]);
 
- const logout = async () => {
-  const response = await fetch(ENDPOINTS.LOGOUT, {
-    method: "POST",
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Logout failed: ${response.status}`);
-  }
-
-  setUser(null);
-};
+  const logout = useCallback(async () => {
+    await fetch(ENDPOINTS.LOGOUT, { method: "POST", credentials: "include" });
+    setUser(null);
+    router.replace("/auth/login");
+  }, [router]);
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        isAuthenticated: !!user,
-        refreshUser: fetchUser,
-        logout,
-      }}
+      value={{ user, loading, isAuthenticated: !!user, refreshUser, logout }}
     >
       {children}
     </AuthContext.Provider>
@@ -97,11 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider");
-  }
-
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  return ctx;
 };

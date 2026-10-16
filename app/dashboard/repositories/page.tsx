@@ -34,11 +34,10 @@ export default function RepositoriesPage() {
         isPending: isStartingIndexing,
     } = useStartRepositoryIndexing();
 
-
     const {
-    mutate: syncRepositories,
-    isPending: isSyncing,
-    error: syncError,
+        mutate: syncRepositories,
+        isPending: isSyncing,
+        error: syncError,
     } = useSyncRepositories();
 
     const [activeFilter, setActiveFilter] =
@@ -88,6 +87,11 @@ export default function RepositoriesPage() {
     }, [repositories, activeFilter, searchQuery]);
 
     function handleIndex(repository: Repository) {
+        // Ignore double clicks while a start request is in flight.
+        if (isStartingIndexing) {
+            return;
+        }
+
         startIndexing(repository.id);
     }
 
@@ -95,8 +99,9 @@ export default function RepositoriesPage() {
         router.push(`/chat/${encodeURIComponent(repository.id)}`);
     }
 
-    async function handleSyncRepositories() {
-        await refetch();
+    function clearFilters() {
+        setSearchQuery("");
+        setActiveFilter("ALL");
     }
 
     if (isPending) {
@@ -153,7 +158,7 @@ export default function RepositoriesPage() {
 
                     <button
                         type="button"
-                        onClick={handleSyncRepositories}
+                        onClick={() => refetch()}
                         disabled={isFetching}
                         className="mt-4 inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
                     >
@@ -183,39 +188,32 @@ export default function RepositoriesPage() {
                         </h1>
                     </div>
 
-                    {/* <button
+                    <button
                         type="button"
-                        onClick={handleSyncRepositories}
-                        disabled={isFetching}
+                        onClick={() => syncRepositories()}
+                        disabled={isSyncing}
                         className="inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <RefreshCw
                             size={16}
-                            className={isFetching ? "animate-spin" : ""}
+                            className={isSyncing ? "animate-spin" : ""}
                         />
-                        {isFetching
-                            ? "Syncing..."
-                            : "Sync Repositories"}
-                    </button> */}
-
-                    <button
-    type="button"
-    onClick={() => syncRepositories()}
-    disabled={isSyncing}
-    className="inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
->
-    <RefreshCw
-        size={16}
-        className={isSyncing ? "animate-spin" : ""}
-    />
-    {isSyncing ? "Syncing..." : "Sync Repositories"}
-</button>
+                        {isSyncing ? "Syncing..." : "Sync Repositories"}
+                    </button>
                 </div>
 
                 <p className="max-w-2xl text-sm text-muted-foreground">
                     Manage your GitHub repositories, check indexing
                     status, and prepare repositories for code search.
                 </p>
+
+                {syncError && (
+                    <p role="alert" className="text-sm text-destructive">
+                        {syncError instanceof Error
+                            ? syncError.message
+                            : "Could not sync repositories. Try again."}
+                    </p>
+                )}
             </section>
 
             {/* Search */}
@@ -283,10 +281,7 @@ export default function RepositoriesPage() {
                 {(searchQuery || activeFilter !== "ALL") && (
                     <button
                         type="button"
-                        onClick={() => {
-                            setSearchQuery("");
-                            setActiveFilter("ALL");
-                        }}
+                        onClick={clearFilters}
                         className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
                     >
                         Clear filters
@@ -314,10 +309,7 @@ export default function RepositoriesPage() {
                     {searchQuery.trim() ? (
                         <button
                             type="button"
-                            onClick={() => {
-                                setSearchQuery("");
-                                setActiveFilter("ALL");
-                            }}
+                            onClick={clearFilters}
                             className="mt-4 rounded-lg border px-4 py-2 text-sm font-medium transition hover:bg-muted"
                         >
                             Clear search and filters
@@ -325,17 +317,15 @@ export default function RepositoriesPage() {
                     ) : (
                         <button
                             type="button"
-                            onClick={handleSyncRepositories}
-                            disabled={isFetching}
+                            onClick={() => syncRepositories()}
+                            disabled={isSyncing}
                             className="mt-4 inline-flex items-center gap-2 rounded-lg border border-input px-4 py-2 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <RefreshCw
                                 size={16}
-                                className={isFetching ? "animate-spin" : ""}
+                                className={isSyncing ? "animate-spin" : ""}
                             />
-                            {isFetching
-                                ? "Syncing..."
-                                : "Sync Repositories"}
+                            {isSyncing ? "Syncing..." : "Sync Repositories"}
                         </button>
                     )}
                 </div>

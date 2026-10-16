@@ -1,18 +1,19 @@
 "use client";
 
 import {
-    ArrowRight,
-    CheckCircle2,
-    Code2,
-    FileCode2,
-    FolderGit2,
-    Layers3,
-    RefreshCw,
+  ArrowRight,
+  CheckCircle2,
+  Code2,
+  FileCode2,
+  FolderGit2,
+  Layers3,
+  RefreshCw,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 import { useRecentlyIndexedRepos } from "@/hooks/use-recently-indexed-repos";
+import { CgGitter } from "react-icons/cg";
 function formatIndexedDate(value: string | null) {
   if (!value) return "Date unavailable";
 
@@ -58,14 +59,17 @@ export default function RecentlyIndexedRepos() {
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900">
+          <div className="flex items-center gap-2">  
+          <CgGitter size={22}/>
+          <span className="text-lg font-semibold text-zinc-900">
             Recently Indexed Repos
-          </h2>
-          <p className="mt-1 text-sm text-zinc-500">
+          </span>
+         
+        </div>
+         <p className="mt-1  ml-4 text-sm text-zinc-500">
             Your latest successfully indexed repositories.
           </p>
-        </div>
-
+      </div>
         <button
           type="button"
           onClick={() => void refetch()}

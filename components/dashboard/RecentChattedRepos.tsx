@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
+  
   Clock3,
   FolderGit2,
   MessageSquare,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 import { useRecentChats } from "@/hooks/use-recent-chats";
 
+import { RiChatSmileAiFill } from "react-icons/ri";
 function formatLastActivity(value: string) {
   const date = new Date(value);
 
@@ -31,14 +33,22 @@ export default function RecentChattedRepos() {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
+        
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900">
-            Recent Chatted Repos
-          </h2>
-          <p className="mt-1 text-sm text-zinc-500">
+          <div className="flex items-center gap-2">  
+          <RiChatSmileAiFill size={22}/>
+          <span className="text-lg font-semibold text-zinc-900">
+            Recent repository conversations
+          </span>
+         
+        </div>
+          <p className="mt-2 ml-4 text-sm text-zinc-500">
             Pick up where you left off.
           </p>
         </div>
+
+        
+         
 
         <button
           type="button"

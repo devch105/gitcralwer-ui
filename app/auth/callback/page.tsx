@@ -8,26 +8,12 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
+const { user, loading } = useAuth();
 
-  const { user, loading, refreshUser } = useAuth();
-
-  useEffect(() => {
-    const authenticate = async () => {
-      await refreshUser();
-    };
-
-    authenticate();
-  }, []);
-
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace("/dashboard");
-    }
-
-    if (!loading && !user) {
-      router.replace("/auth/login");
-    }
-  }, [user, loading, router]);
+useEffect(() => {
+  if (loading) return;
+  router.replace(user ? "/dashboard" : "/auth/login?error=session");
+}, [user, loading, router]);
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#09090b] text-white">
