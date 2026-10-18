@@ -11,6 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import type { ChatSession } from "@/types/chat";
 
+import { TiArrowLeftOutline } from "react-icons/ti";
+
+
 interface ChatSidebarProps {
   sessions: ChatSession[];
   activeSessionId: string | null;
@@ -19,6 +22,7 @@ interface ChatSidebarProps {
   onNewChat: () => void;
   onSelectSession: (sessionId: string) => void;
   onClose: () => void;
+  onRedirect: () => void;
 }
 
 export default function ChatSidebar({
@@ -29,6 +33,7 @@ export default function ChatSidebar({
   onNewChat,
   onSelectSession,
   onClose,
+  onRedirect,
 }: ChatSidebarProps) {
   return (
     <aside className="flex h-full w-72 shrink-0 flex-col border-r bg-muted/20 p-3">
@@ -44,6 +49,15 @@ export default function ChatSidebar({
           aria-label="Close sidebar"
         >
           <PanelLeftClose className="size-4" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onRedirect}
+          aria-label="Go back to dashboard"
+        >
+          <TiArrowLeftOutline/>
         </Button>
       </div>
 

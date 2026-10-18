@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle, Menu } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 import ChatComposer from "@/components/chat/chat-composer";
 import ChatHeader from "@/components/chat/chat-header";
 import ChatSidebar from "@/components/chat/chat-sidebar";
@@ -41,6 +41,8 @@ export default function ChatView({ repoId }: ChatViewProps) {
 
   const sessions = sessionsQuery.data ?? [];
   const messages = messagesQuery.data ?? [];
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!sessionsQuery.isSuccess) return;
@@ -172,6 +174,10 @@ onDone: () => {
 },
 });
 
+const handleRedirect =()=>{
+  router.push(`/dashboard`);
+}
+
 async function handleSendMessage(content: string) {
   if (!activeSessionId || !content.trim() || chatStream.isStreaming) {
     return;
@@ -194,6 +200,7 @@ async function handleSendMessage(content: string) {
             onNewChat={() => void handleNewChat()}
             onSelectSession={setActiveSessionId}
             onClose={() => setSidebarOpen(false)}
+            onRedirect={handleRedirect}
           />
         </div>
       )}
