@@ -177,7 +177,7 @@ onDone: () => {
 });
 
 const handleRedirect =()=>{
-  router.push(`/dashboard`);
+  router.push(`/repositories`);
 }
 
 async function handleSendMessage(content: string) {
