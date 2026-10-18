@@ -42,14 +42,14 @@ export default function ChatSidebar({
           GitCrawler
         </span>
 
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
           onClick={onClose}
           aria-label="Close sidebar"
         >
           <PanelLeftClose className="size-4" />
-        </Button>
+        </Button> */}
 
         <Button
           variant="ghost"

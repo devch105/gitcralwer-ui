@@ -1,14 +1,16 @@
 "use client";
 
-import { LoaderCircle, Menu } from "lucide-react";
-import { useRouter } from "next/navigation";
 import ChatComposer from "@/components/chat/chat-composer";
 import ChatHeader from "@/components/chat/chat-header";
 import ChatSidebar from "@/components/chat/chat-sidebar";
 import MessageList from "@/components/chat/message-list";
 import { Button } from "@/components/ui/button";
 import { ENDPOINTS } from "@/utilities/endpoints";
+import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+
+import { LuPanelLeftClose } from "react-icons/lu";
 
 import { useChatMessages } from "@/hooks/use-chat-message";
 import {
@@ -213,7 +215,7 @@ async function handleSendMessage(content: string) {
             aria-label="Toggle sidebar"
             onClick={() => setSidebarOpen((open) => !open)}
           >
-            <Menu className="size-4" />
+            <LuPanelLeftClose className="size-4" />
           </Button>
 
           <ChatHeader repoId={repoId} repoFullName={repoFullName} />
