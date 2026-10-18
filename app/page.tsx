@@ -4,6 +4,7 @@
 import { FaGitkraken } from "react-icons/fa";
 
 import { useAuth } from "@/context/AuthContext";
+import { ENDPOINTS } from "@/utilities/endpoints";
 import {
   ArrowRight,
   BrainCircuit,
@@ -85,14 +86,18 @@ export default function HomePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+    const handleSignIn = () => {
+      window.location.href = ENDPOINTS.GITHUB_LOGIN;
+    };
+
   const handleGetStarted = () => {
     if (loading) return;
-
+gpush
     if (user) {
       router.push("/dashboard");
       return;
     }else{
-      router.push("/auth/login")
+      router.push(ENDPOINTS.GITHUB_LOGIN);
       return ;
     }
   };
