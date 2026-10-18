@@ -92,7 +92,7 @@ export default function HomePage() {
 
   const handleGetStarted = () => {
     if (loading) return;
-gpush
+
     if (user) {
       router.push("/dashboard");
       return;
