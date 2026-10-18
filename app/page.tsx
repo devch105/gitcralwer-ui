@@ -103,9 +103,9 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#09090b] text-white">
+    <main className="min-h-screen overflow-hidden bg-[#1A1A1A] text-white">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#09090b]/85 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#1A1A1A]/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06]">
@@ -369,13 +369,18 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-white/[0.08] px-5 py-7 md:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-zinc-500 sm:flex-row">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-around gap-4 text-sm text-zinc-500 sm:flex-row">
           <Link href="/" className="flex items-center gap-2 text-zinc-300">
             <FaGitkraken className="h-4 w-4" />
             <span className="font-medium">GitCrawler</span>
           </Link>
+
+           <p className="ml-4 text-center text-xs text-zinc-500">
+            © 2026 Git Crawler. Made By Dev Dhama
+          </p>
           <p>Explore your code. Understand your projects.</p>
         </div>
+        
       </footer>
     </main>
   );
