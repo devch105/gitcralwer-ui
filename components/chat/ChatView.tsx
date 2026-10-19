@@ -187,7 +187,7 @@ async function handleSendMessage(content: string) {
 
   streamingSessionIdRef.current = activeSessionId;
 
-  await chatStream.sendMessage(activeSessionId, content);
+  await chatStream.sendMessage(activeSessionId, content); 
 }
 
   return (
