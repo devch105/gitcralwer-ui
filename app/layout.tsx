@@ -1,6 +1,6 @@
 import { AuthProvider } from "@/context/AuthContext";
 import type { Metadata } from "next";
-import { Outfit, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 
@@ -17,6 +17,9 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "GitCrawler",
   description: "GitHub repository analysis platform",
+  icons :{
+      icon: "/icon.png",
+  }
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
